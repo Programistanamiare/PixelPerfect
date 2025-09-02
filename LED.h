@@ -15,9 +15,9 @@ typedef struct __attribute__((packed)) pix_LED {
 
 typedef pix_LED pix_Color;
 
-#ifdef __AVR__
+void pix_LED_set32bit(pix_LED *led, uint32_t color);
 
-#include <avr/io.h>
+#ifdef __AVR__
 
 typedef struct gpio_pin_t {
   volatile uint8_t* ddr;
