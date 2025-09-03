@@ -1,4 +1,4 @@
-; === Timing borders for bit x TxH/TxL === === === === === === ===;
+; === Timing borders for bit x TxH/TxL in AVR  === === === === ===;
 ;           1 bit (1)     1 bit (0)                               ;
 ;       <-------------><------------>                             ;
 ;          T1H          T0H                                       ;
