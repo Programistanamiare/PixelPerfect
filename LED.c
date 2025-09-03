@@ -87,3 +87,11 @@ void pix_fillFromTo3x8bit(pix_LED *leds, uint16_t len, uint8_t r, uint8_t g, uin
   }
 }
 
+void pix_fillFromTo32bit(pix_LED *leds, uint16_t len, uint32_t color, uint16_t from, uint16_t to) {
+  return pix_fillFromTo3x8bit(leds, len, (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff, from, to);
+}
+
+void pix_fillFromToColor(pix_LED *leds, uint16_t len, pix_Color color, uint16_t from, uint16_t to) {
+  return pix_fillFromTo3x8bit(leds, len, color.r, color.g, color.b, from, to);
+}
+
