@@ -117,6 +117,8 @@ void transmitNS(volatile uint8_t *data, volatile uint16_t data_l, const gpio_pin
     "nop \n\t"
     "nop \n\t"
     
+    : [port] "+e" (p->port), [color] "+r" (color), [bit_count] "+r" (bit_count), [data_l] "+w" (data_l)
+    : [data] "e" (data), [hi] "r" (hi), [lo] "r" (lo)
   );
 #else
 #error "Unsupported F_CPU!"
