@@ -3,7 +3,7 @@ import sys
 import matplotlib.pyplot as plt
 
 GAMMA = 2.8
-FILE_NAME = "../gammaTableLUT.h"
+FILE_NAME = "gammaTableLUT.h"
 
 def gammaCorrection(v: int) -> np.uint8:
   x = v / 255

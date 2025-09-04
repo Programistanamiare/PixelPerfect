@@ -55,7 +55,7 @@ def xyz_to_rgb(X, Y, Z):
   return tuple(rgb)
 
 CIE_PATH = "CIE_xyz_1931_2deg.csv"
-FILE_PATH = "../kelvinTableLUT.h"
+FILE_PATH = "kelvinTableLUT.h"
 T_min = 520
 T_max = 10000
 n_points = 256

@@ -28,14 +28,5 @@ const uint8_t TO_FLASH __GAMMA8_TABLE[256] = {
   243, 244, 244, 245, 245, 245, 246, 246, 247, 247, 247, 248, 248, 248, 249, 249, 
   250, 250, 250, 251, 251, 251, 252, 252, 252, 253, 253, 254, 254, 254, 255, 255, 
 };
-
-
-uint8_t getGamma(uint8_t i) {
-#ifdef __AVR__
-  return pgm_read_byte(&__GAMMA8_TABLE[i]);
-#else
-  return __GAMMA8_TABLE[i];
-#endif
-}
   
 #endif
