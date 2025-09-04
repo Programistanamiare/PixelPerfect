@@ -1,13 +1,103 @@
 #ifdef __AVR__
 
 #include "LED.h"
+#include <avr/io.h>
 
 void transmitNS(volatile uint8_t *data, volatile uint16_t data_l, const gpio_pin_t *p) {
   register uint8_t color asm("r16");
   register uint8_t bit_count asm("r17");
   const uint8_t hi = *p->port | (1 << p->pin), lo = *p->port & ~(1 << p->pin);
 
-#if (F_CPU >= 14000000) && (F_CPU <= 16000000)
+#if F_CPU == 8000000
+
+#define transmitDataNS8(_port) 			\
+	asm volatile(				\
+		"ldi %[bit_count], 0x08 \n\t"	\
+		"ld %[color], %a[data]+ \n\t"	\
+		"lsl %[color] \n\t"		\
+		"brcc 5f\n\t"			\
+		"rjmp 2f\n\t"			\
+						\
+		"1: \n\t"			\
+		"ldi %[bit_count], 0x08 \n\t"	\
+		"out %[port], %[hi] \n\t"	\
+		"sbiw %[data_l], 0x01 \n\t"	\
+		"out %[port], %[lo] \n\t"	\	
+		"breq 6f \n\t"			\	
+		"ld %[color], %a[data]+ \n\t"	\	
+		"lsl %[color] \n\t"		\	
+		"brcc 5f \n\t"			\	
+		"nop \n\t"			\	
+						\
+		"2: \n\t"			\
+		"out %[port], %[hi] \n\t"	\	
+		"dec %[bit_count] \n\t"		\	
+		"cpi %[bit_count], 0x01 \n\t"	\	
+		"breq 3f \n\t"			\	
+		"nop \n\t"			\	
+		"lsl %[color] \n\t"		\	
+		"out [port], %[lo] \n\t"	\	
+		"brcc 5f \n\t"			\	
+		"rjmp 2b \n\t"			\	
+						\
+		"3: \n\t"			\
+		"lsl %[color] \n\t"		\
+		"brcc 1b \n\t"			\
+		"rjmp 4f \n\t"			\
+						\
+		"4: \n\t"			\
+		"out %[port], %[hi] \n\t"	\	
+		"sbiw %[data_l], 0x01 \n\t"	\	
+		"breq 6f \n\t"			\	
+		"ld %[color], %a[data]+ \n\t"	\	
+		"out %[port], %[lo] \n\t"	\	
+		"lsl %[color] \n\t"		\	
+		"brcs 2b \n\t"			\	
+						\
+		"5: \n\t"			\
+		"nop \n\t"			\	
+		"out %[port], %[hi] \n\t"	\	
+		"dec %[bit_count] \n\t"		\	
+		"cpi %[bit_count], 0x01 \n\t"	\	
+		"out %[port], %[lo] \n\t"	\	
+		"breq 3b \n\t"			\	
+		"nop \n\t"			\	
+		"lsl %[color] \n\t"		\	
+		"brcc 5b \n\t"			\	
+		"rjmp 2b \n\t"			\	
+						\
+		"6: \n\t"			\
+		"out %[port], %[lo] \n\t"	\
+		"nop \n\t"			\
+		"nop \n\t"			\
+		"nop \n\t"			\
+						\
+		: [color] "+r" (color),		\
+		  [bit_count] "+r" (bit_count),	\
+		  [data_l] "+w" (data_l)	\
+		: [port] "I" (_port),		\
+		  [data] "e" (data),		\
+		  [hi] "r" (hi),		\
+		  [lo] "r" (lo)			\
+	)
+
+	     if (*p->port == PORTB) transmitDataNS8(_SFR_IO_ADDR(PORTB));
+	else if (*p->port == PORTC) transmitDataNS8(_SFR_IO_ADDR(PORTC));
+	else if (*p->port == PORTD) transmitDataNS8(_SFR_IO_ADDR(PORTD));
+#ifdef PORTA
+  else if (*p->port == PORTA) transmitDataNS8(_SFR_IO_ADDR(PORTA));
+#endif
+#ifdef PORTE
+  else if (*p->port == PORTE) transmitDataNS8(_SFR_IO_ADDR(PORTE));
+#endif
+#ifdef PORTF
+  else if (*p->port == PORTF) transmitDataNS8(_SFR_IO_ADDR(PORTF));
+#endif
+#ifdef PORTG
+  else if (*p->port == PORTG) transmitDataNS8(_SFR_IO_ADDR(PORTF));
+#endif
+
+#elif F_CPU == 16000000
   asm volatile(
     // Init
     "ldi %[bit_count], 0x08 \n\t"

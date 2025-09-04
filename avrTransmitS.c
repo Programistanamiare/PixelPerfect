@@ -9,7 +9,7 @@
 void transmitS(volatile uint8_t* data, volatile uint16_t data_l, const gpio_pin_t *p, uint8_t bright) {
   register uint8_t color asm("r16");
   register uint8_t bit_count asm("r17");
-  register uint8_t color_2sc asm("r3");
+  volatile uint8_t color_2sc;
   const uint8_t hi = *p->port | (1 << p->pin), lo = *p->port & ~(1 << p->pin);
 #if 0 == PIX_SCALE_METHOD
   const uint8_t scale = 0;
